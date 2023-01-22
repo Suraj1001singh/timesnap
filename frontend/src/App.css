@@ -54,7 +54,7 @@ body {
 .App {
   position: relative;
   padding: 50px 50px;
-  background: #fff;
+  background: rgba(255, 255, 255);
   border-radius: 10px;
 }
 .App h1 {
