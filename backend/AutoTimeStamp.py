@@ -5,6 +5,7 @@ import youtube_dl
 import logging
 import sys
 from datetime import datetime
+import yt_dlp
 logging.basicConfig(level=logging.INFO)
 
 
@@ -26,14 +27,14 @@ class AutoYouTubeTimestamp:
 
     # CONVERT VIDEO TO AUDIO FILE
     def __downloadAudio(self, video_url):
-        video_info = youtube_dl.YoutubeDL().extract_info(url=video_url, download=False)
+        video_info = yt_dlp.YoutubeDL().extract_info(url=video_url, download=False)
         filename = f"{video_info['title']}.mp3"
         options = {
             'format': 'bestaudio/best',
             'keepvideo': False,
             'outtmpl': filename,
         }
-        with youtube_dl.YoutubeDL(options) as ydl:
+        with yt_dlp.YoutubeDL(options) as ydl:
             ydl.download([video_info['webpage_url']])
         print("Download complete... {}".format(filename))
         return filename
@@ -100,6 +101,12 @@ class AutoYouTubeTimestamp:
                 json.dump(chapters, f, indent=4)
                 logging.info(
                     f"{datetime.now()} - Transcript chapters saved to {fname_chapters}")
+                #print(chapters)
+                #data_ch = json.dumps(chapters)
+                #print(data_ch)
+                data = {'vid':sys.argv[1],'output':chapters}
+            s=requests.post(url='http://127.0.0.1:8000/api/student/video/transcribe',data=json.dumps(data))
+                
 
             with open(fname_highlights, 'w') as f:
                 highlights = polling_response.json()['auto_highlights_result']

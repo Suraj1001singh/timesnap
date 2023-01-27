@@ -1,6 +1,10 @@
 from django.db import models
 
 # Create your models here.
-class Student(models.Model):
-    stuname = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
+class Video(models.Model):
+    id_video = models.CharField(max_length=2000)
+    output = models.CharField(max_length=200000)
+
+class Audio(models.Model):
+    id_video = models.CharField(max_length=2000)
+    output = models.CharField(max_length=200000)
