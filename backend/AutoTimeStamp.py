@@ -6,6 +6,7 @@ import logging
 import sys
 from datetime import datetime
 import yt_dlp
+# import transformers
 logging.basicConfig(level=logging.INFO)
 
 
@@ -28,7 +29,7 @@ class AutoYouTubeTimestamp:
     # CONVERT VIDEO TO AUDIO FILE
     def __downloadAudio(self, video_url):
         video_info = yt_dlp.YoutubeDL().extract_info(url=video_url, download=False)
-        filename = f"{video_info['title']}.mp3"
+        filename = "test.mp3"
         options = {
             'format': 'bestaudio/best',
             'keepvideo': False,
@@ -55,8 +56,8 @@ class AutoYouTubeTimestamp:
             headers=self.__headers_auth,
             data=read_file(filename)
         )
-        logging.info(
-            f"{datetime.now()} - Audio file uploaded! URL = {upload_response.json()['upload_url']}")
+        # logging.info(
+        #     f"{datetime.now()} - Audio file uploaded! URL = {upload_response.json()['upload_url']}")
         return upload_response.json()['upload_url']
 
    # TRANSCRIBE AUDIO TO TEXT
@@ -67,13 +68,17 @@ class AutoYouTubeTimestamp:
             url=self.__endpoint_transcript,
             headers=self.__headers,
             json={
+                
                 'audio_url': audio_url,
                 'auto_chapters': True,
-                'auto_highlights': True
+                'auto_highlights': True,
+                # 'summarization':True,
+                # 'summary_model':'informative',
+                # 'summary_type':'paragraph'
             }
         )
-        logging.info(
-            f"{datetime.now()} - Audio file transcribed! ID = {transcript_response.json()['id']}")
+        # logging.info(
+        #     f"{datetime.now()} - Audio file transcribed! ID = {transcript_response.json()['id']}")
         return transcript_response.json()['id']
 
     #POLLING RESPONSES
@@ -85,6 +90,12 @@ class AutoYouTubeTimestamp:
                 headers=self.__headers
             )
             return polling_response
+        def summarize(text):
+            from transformers import pipeline
+            summarizer = pipeline("summarization")
+            summary = summarizer(text, max_length=130, min_length=30, do_sample=False)
+            print(summary)
+            return summary[0].summary_text
 
         def save(transcript_id: str):
             fname_transcript = f"{transcript_id}.txt"
@@ -98,13 +109,26 @@ class AutoYouTubeTimestamp:
 
             with open(fname_chapters, 'w') as f:
                 chapters = polling_response.json()['chapters']
-                json.dump(chapters, f, indent=4)
+                arr=[]
+                for chapter in chapters:
+                    arr.append(chapter['summary'])
+               
+                summary=" ".join(arr)
+                dictionary = {
+                    "timestamps":chapters,
+                    "summary": summary
+                }
+                # json1= json.dumps(dictionary,indent=4)
+                list1=[]
+                list1.append(dictionary)
+                json.dump(list1,f, indent=4)
+                data_ch=json.dumps(list1)
                 logging.info(
                     f"{datetime.now()} - Transcript chapters saved to {fname_chapters}")
                 #print(chapters)
                 #data_ch = json.dumps(chapters)
                 #print(data_ch)
-                data = {'vid':sys.argv[1],'output':chapters}
+                data = {'vid':sys.argv[1],'output':data_ch}
             s=requests.post(url='http://127.0.0.1:8000/api/student/video/transcribe',data=json.dumps(data))
                 
 
@@ -120,12 +144,18 @@ class AutoYouTubeTimestamp:
         while not finished:
             polling_response = get_response(transcript_id=transcript_id)
             if polling_response.json()['status'] == 'completed':
+                # sum= summarize(polling_response.json()['text'])
+                # print(sum)
+                # print(polling_response)
                 save(transcript_id=transcript_id)
                 finished = True
             else:
                 logging.warning(
                     f"{datetime.now()} - Transcribing still in progress - Trying again in 30 seconds.")
                 time.sleep(30)
+
+    
+
     # DRIVING FUNCTION
     def run(self, link) -> None:
         filename = self.__downloadAudio(link)

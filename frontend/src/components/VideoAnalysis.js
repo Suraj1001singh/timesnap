@@ -10,7 +10,9 @@ const VideoAnalysis = (props) => {
 
   const handleplay = (e)=>{
     let a = e.target.value;
-    let mod_url = props.url+ '?t=' + a + 's';
+    
+    a /=1000;
+    let mod_url = props.url+ '?t=' + a + 'ms';
     console.log(mod_url);
     props.setplay(mod_url)
   }
@@ -19,7 +21,7 @@ const VideoAnalysis = (props) => {
    { console.log(props.output[0].category)}
     <div className="row" style={{marginLeft:'2%'}}>
     <div className="col-5 Box result">
-    <Form.Group controlId="name">
+    {/* <Form.Group controlId="name">
     <Form.Label  style={{color:'#aa2727', fontSize:'30px',fontWeight:'bold',marginLeft:'30%'}} htmlFor="Category">Category</Form.Label>
     <Col sm={10}>
     <Form.Control
@@ -31,7 +33,7 @@ const VideoAnalysis = (props) => {
         disabled
       />
      </Col>
-      </Form.Group>
+      </Form.Group> */}
       <Form.Group  controlId="name">
       <Form.Label  style={{color:'#aa2727', fontSize:'30px',fontWeight:'bold',marginLeft:'30%',marginTop:'2%'}} htmlFor="TimeStamp">TimeStamps</Form.Label>
         <Table striped bordered style={{backgroundColor:'white'}}>
@@ -39,9 +41,9 @@ const VideoAnalysis = (props) => {
         {props.output[0].timestamps.map((val)=>{
            return  <>
         <tr>
-       <td> <Button variant="success" onClick={handleplay} value={val.start}>{val.start}</Button></td>
+       <td> <Button variant="success" onClick={handleplay} value={val.start}>{val.start/1000}</Button></td>
          
-          <td>{val.headline}</td>
+          <td>{val.gist}</td>
         </tr>
         </>
         })}
