@@ -1,17 +1,18 @@
-import React from "react";
-import "./App.css";
-import InputBox from "./components/inputBox";
+import { useState } from "react";
+import Header from "./components/Header";
+import SearchBar from "./components/SearchBar";
 
-export default function App() {
+const App = () => {
+  const [theme, setTheme] = useState("dark");
 
   return (
-    <>
-    <div className="App" >
-      
-      <InputBox/>
+    <div>
+      <div className="container" data-theme={theme}>
+        <Header theme={theme} setTheme={setTheme} />
+        <SearchBar />
+      </div>
     </div>
-    </>
   );
-}
+};
 
- 
+export default App;

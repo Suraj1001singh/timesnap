@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@primer/octicons-react": "^18.2.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -14,6 +15,7 @@
     "react-player": "^2.11.0",
     "react-scripts": "5.0.1",
     "react-tsparticles": "^1.42.4",
+    "sass": "^1.59.3",
     "tsparticles": "^1.40.2",
     "web-vitals": "^2.1.4"
   },

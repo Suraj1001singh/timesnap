@@ -28,7 +28,7 @@ class AutoYouTubeTimestamp:
     # CONVERT VIDEO TO AUDIO FILE
     def __downloadAudio(self, video_url):
         video_info = yt_dlp.YoutubeDL().extract_info(url=video_url, download=False)
-        filename = f"{video_info['title']}.mp3"
+        filename = "test.mp3"
         options = {
             'format': 'bestaudio/best',
             'keepvideo': False,
@@ -67,6 +67,9 @@ class AutoYouTubeTimestamp:
             url=self.__endpoint_transcript,
             headers=self.__headers,
             json={
+                # 'summarization':True,
+                # 'summary_model': "informative",
+                # 'summary_type': "paragraph",
                 'audio_url': audio_url,
                 'auto_chapters': True,
                 'auto_highlights': True
@@ -120,12 +123,23 @@ class AutoYouTubeTimestamp:
         while not finished:
             polling_response = get_response(transcript_id=transcript_id)
             if polling_response.json()['status'] == 'completed':
+                sum= summarize(polling_response.json()['text'])
+                print(sum)
+                print(polling_response)
                 save(transcript_id=transcript_id)
                 finished = True
             else:
                 logging.warning(
                     f"{datetime.now()} - Transcribing still in progress - Trying again in 30 seconds.")
                 time.sleep(30)
+
+    def summarize(text):
+        from transformers import pipeline
+        summarizer = pipeline("summarization")
+        summary = summarizer(text, max_length=130, min_length=30, do_sample=False)
+        print(summary)
+        return summary[0].summary_text;
+        
     # DRIVING FUNCTION
     def run(self, link) -> None:
         filename = self.__downloadAudio(link)
