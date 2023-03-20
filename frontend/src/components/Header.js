@@ -11,8 +11,7 @@ const Header = (props) => {
     <div className="header">
       <h2 className="logo">TimeSnap</h2>
       <div className="theme-toggler" onClick={toggleTheme}>
-        <span className="theme-name">{getOtherTheme().toUpperCase()}</span>
-        {props.theme === "light" ? <MoonIcon size={16} /> : <SunIcon size={16} />}
+        {props.theme === "light" ? <MoonIcon size={26} /> : <SunIcon size={26} />}
       </div>
     </div>
   );
