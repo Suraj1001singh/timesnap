@@ -5,7 +5,7 @@ const SearchBar = (props) => {
     <div className="search-bar">
       <SearchIcon size={32}></SearchIcon>
       <input type="search" placeholder="Search URL ..." spellCheck="false" />
-      <button type="button">Search</button>
+      <button type="button">Generate</button>
     </div>
   );
 };

@@ -163,6 +163,7 @@
     float: left;
     transition: 0.4s;
     width: 0px;
+    
 
     &:focus {
       outline: transparent;
@@ -222,6 +223,9 @@
 .search-bar:hover > input {
   width: 340px;
   padding: 0 6px;
+  @media screen and (max-width: 500px) {
+    width: 200px;
+  }
 }
 .profile {
   margin-top: 1.25rem;
